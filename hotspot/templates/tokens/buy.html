@@ -1,7 +1,6 @@
-{% extends "base.html" %} {% block title %}Buy Tokens - Webmart{% endblock %} {%
-block content %}
+{% extends "base.html" %} {% block title %}Buy Tokens — WebMART{% endblock %} {% block content %}
 <div class="row justify-content-center">
-  <div class="col-md-6">
+  <div class="col-md-5">
     <div class="card">
       <div class="card-header">
         <h4 class="mb-0">Buy Tokens</h4>
@@ -11,21 +10,16 @@ block content %}
           {% csrf_token %}
           <div class="mb-3">
             <label for="quantity" class="form-label">Quantity</label>
-            <input
-              type="number"
-              class="form-control"
-              id="quantity"
-              name="quantity"
-              min="1"
-              value="1"
-            />
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" />
           </div>
-          <p class="text-muted">Price: $0.50 per token</p>
+          <div class="alert alert-info">
+            <strong>Price:</strong> $0.50 per token<br>
+            <strong>Duration:</strong> 5 hours per token
+          </div>
           <button type="submit" class="btn btn-success w-100">Purchase</button>
         </form>
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary w-100 mt-2"
-          >Back to Dashboard</a
-        >
+        <hr>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100">Back to Dashboard</a>
       </div>
     </div>
   </div>

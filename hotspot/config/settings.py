@@ -176,3 +176,12 @@ SPECTACULAR_SETTINGS = {
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# Media Services (loaded from .env or defaults)
+JELLYFIN_URL = os.getenv('JELLYFIN_URL', '')
+JELLYFIN_LABEL = os.getenv('JELLYFIN_LABEL', 'Jellyfin')
+NAVIDROME_URL = os.getenv('NAVIDROME_URL', '')
+NAVIDROME_LABEL = os.getenv('NAVIDROME_LABEL', 'Navidrome')
+IMMICH_URL = os.getenv('IMMICH_URL', '')
+IMMICH_LABEL = os.getenv('IMMICH_LABEL', 'Immich')
+ADDITIONAL_SERVICES = os.getenv('ADDITIONAL_SERVICES', '')  # JSON: [{"name": "", "url": "", "icon": ""}]

@@ -1,99 +1,206 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Webmart{% endblock %}
+{% block title %}Dashboard — WebMART{% endblock %}
 
 {% block content %}
-<h2>Welcome, {{ user.email }}</h2>
+<div class="row">
+  <div class="col-lg-10 mx-auto">
+    <!-- Welcome Header -->
+    <div class="hero mb-4">
+      <h1>Welcome back!</h1>
+      <p class="lead">Your gateway to premium media services</p>
+    </div>
 
-<!-- Available Tokens -->
-<div class="card mb-4">
-  <div class="card-header">
-    <h5 class="mb-0">Available Tokens: {{ available }}</h5>
-  </div>
-  <div class="card-body">
-    <a href="{% url 'buy_tokens' %}" class="btn btn-success">Buy More Tokens</a>
-  </div>
-</div>
+    <!-- Token Stats -->
+    <div class="token-stats">
+      <div class="stat-card">
+        <span class="stat-number">{{ available }}</span>
+        <span class="stat-label">Available Tokens</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ active_count }}</span>
+        <span class="stat-label">Active Now</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ tokens|length }}</span>
+        <span class="stat-label">Total Tokens</span>
+      </div>
+    </div>
 
-<!-- Token List -->
-<div class="card mb-4">
-  <div class="card-header">
-    <h5 class="mb-0">Your Tokens</h5>
-  </div>
-  <div class="card-body">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Token ID</th>
-          <th>Source</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th>Expires</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for token in tokens %}
-        <tr>
-          <td>{{ token.id|truncatechars:8 }}</td>
-          <td>{{ token.get_source_display }}</td>
-          <td>
-            {% if token.is_active %}
-            <span class="badge bg-success">Active</span>
-            {% elif token.used %}
-            <span class="badge bg-warning">Used</span>
-            {% else %}
-            <span class="badge bg-primary">Available</span>
-            {% endif %}
-          </td>
-          <td>{{ token.created_at|date:"Y-m-d H:i" }}</td>
-          <td>{{ token.expires_at|date:"Y-m-d H:i"|default:"—" }}</td>
-          <td>
-            {% if not token.used %}
-            <a href="{% url 'activate_token' token.id %}" class="btn btn-sm btn-primary">Activate</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="6" class="text-center">No tokens yet. Register to receive 5 free tokens!</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+    <!-- Quick Actions -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">⚡ Quick Actions</h5>
+      </div>
+      <div class="card-body">
+        <a href="{% url 'buy_tokens' %}" class="btn btn-success">Buy More Tokens</a>
+        {% if active_token %}
+        <button class="btn btn-outline-primary ms-2" disabled>
+          ✓ Token Active ({{ active_token_expires|timesince }} left)
+        </button>
+        {% endif %}
+      </div>
+    </div>
 
-<!-- Recent Sessions -->
-<div class="card">
-  <div class="card-header">
-    <h5 class="mb-0">Recent Sessions</h5>
-  </div>
-  <div class="card-body">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Duration</th>
-          <th>Bandwidth</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for session in sessions %}
-        <tr>
-          <td>{{ session.start_time|date:"Y-m-d H:i" }}</td>
-          <td>{{ session.end_time|date:"Y-m-d H:i"|default:"Active" }}</td>
-          <td>{{ session.duration_seconds|default:0 }}s</td>
-          <td>{{ session.total_bytes|default:0 }} bytes</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" class="text-center">No sessions yet.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <!-- Media Services -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">🎬 Media Services</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          {% if jellyfin_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ jellyfin_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">🎬</span>
+                <div class="service-name">{{ jellyfin_label|default:"Movies" }}</div>
+                <div class="service-desc">Movies & TV Shows</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if navidrome_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ navidrome_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">🎵</span>
+                <div class="service-name">{{ navidrome_label|default:"Music" }}</div>
+                <div class="service-desc">Music Streaming</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if immich_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ immich_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">📸</span>
+                <div class="service-name">{{ immich_label|default:"Photos" }}</div>
+                <div class="service-desc">Photo Library</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if additional_services %}
+            {% for svc in additional_services %}
+            <div class="col-md-4 col-sm-6">
+              <a href="{{ svc.url }}" target="_blank" class="text-decoration-none">
+                <div class="service-card">
+                  <span class="service-icon">{{ svc.icon }}</span>
+                  <div class="service-name">{{ svc.name }}</div>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+          {% endif %}
+          {% if not jellyfin_url and not navidrome_url and not immich_url %}
+          <div class="col-12 text-center text-muted py-3">
+            <p>No media services configured yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Token List -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">🎫 Your Tokens</h5>
+        <span class="badge bg-light text-dark">{{ available }} available</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for token in tokens %}
+              <tr>
+                <td><code class="text-primary">{{ token.id|truncatechars:8 }}</code></td>
+                <td>
+                  {% if token.source == 'registration' %}
+                  <span class="badge bg-info">🎁 Gift</span>
+                  {% else %}
+                  <span class="badge bg-secondary">💳 Purchased</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if token.is_active %}
+                  <span class="badge bg-success">✓ Active</span>
+                  {% elif token.used %}
+                  <span class="badge bg-warning">⏳ Used</span>
+                  {% else %}
+                  <span class="badge bg-primary">Available</span>
+                  {% endif %}
+                </td>
+                <td>{{ token.created_at|date:"M j, H:i" }}</td>
+                <td>
+                  {% if token.expires_at %}{{ token.expires_at|date:"M j, H:i" }}{% else %}—{% endif %}
+                </td>
+                <td>
+                  {% if not token.used and available > 0 %}
+                  <a href="{% url 'activate_token' token.id %}" class="btn btn-sm btn-primary">Activate</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-4">
+                  <p class="text-muted mb-0">No tokens yet. Register to receive 5 free tokens!</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">📊 Recent Sessions</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Duration</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for session in sessions %}
+              <tr>
+                <td>{{ session.start_time|date:"M j, H:i" }}</td>
+                <td>{% if session.end_time %}{{ session.end_time|date:"M j, H:i" }}{% else %}<span class="text-success">Active</span>{% endif %}</td>
+                <td>{% if session.duration_seconds %}{{ session.duration_seconds|divisibleby:3600|floordiv:0 }}h {{ session.duration_seconds|divisibleby:60|mod:60 }}m{% else %}—{% endif %}</td>
+                <td>{% if session.total_bytes %}{{ session.total_bytes|filesizeformat }}{% else %}—{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  <p class="text-muted mb-0">No sessions yet.</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

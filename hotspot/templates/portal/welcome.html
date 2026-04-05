@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome — WebMART{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- Hero -->
+    <div class="hero mb-4">
+      <h1>Welcome to WebMART Guest WiFi</h1>
+      <p class="lead">Free premium access to our media services while you wait</p>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <span class="service-icon">📝</span>
+            <h5 class="service-name">Register</h5>
+            <p class="service-desc">Create a free account and get 5 tokens instantly</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <span class="service-icon">⏱️</span>
+            <h5 class="service-name">Activate Token</h5>
+            <p class="service-desc">Each token gives you 5 hours of access</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <span class="service-icon">🎬</span>
+            <h5 class="service-name">Enjoy Media</h5>
+            <p class="service-desc">Stream movies, music, and photos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What's On Offer -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">🎬 What's On Offer</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          {% if jellyfin_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ jellyfin_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">🎬</span>
+                <div class="service-name">{{ jellyfin_label|default:"Movies" }}</div>
+                <div class="service-desc">Movies & TV Shows</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if navidrome_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ navidrome_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">🎵</span>
+                <div class="service-name">{{ navidrome_label|default:"Music" }}</div>
+                <div class="service-desc">Music Streaming</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if immich_url %}
+          <div class="col-md-4 col-sm-6">
+            <a href="{{ immich_url }}" target="_blank" class="text-decoration-none">
+              <div class="service-card">
+                <span class="service-icon">📸</span>
+                <div class="service-name">{{ immich_label|default:"Photos" }}</div>
+                <div class="service-desc">Photo Library</div>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+          {% if additional_services %}
+            {% for svc in additional_services %}
+            <div class="col-md-4 col-sm-6">
+              <a href="{{ svc.url }}" target="_blank" class="text-decoration-none">
+                <div class="service-card">
+                  <span class="service-icon">{{ svc.icon }}</span>
+                  <div class="service-name">{{ svc.name }}</div>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+          {% endif %}
+          {% if not jellyfin_url and not navidrome_url and not immich_url %}
+          <div class="col-12 text-center text-muted py-3">
+            <p>Media services coming soon! Register to be notified.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <h4 class="mb-3">Ready to get started?</h4>
+      <div>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-2">Register Free</a>
+        <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg">Login</a>
+      </div>
+      <p class="mt-3 text-muted">Register now and get <strong>5 free tokens</strong> (5 hours each)</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
