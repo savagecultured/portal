@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Webmart{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.email }}</h2>
+
+<!-- Available Tokens -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">Available Tokens: {{ available }}</h5>
+  </div>
+  <div class="card-body">
+    <a href="{% url 'buy_tokens' %}" class="btn btn-success">Buy More Tokens</a>
+  </div>
+</div>
+
+<!-- Token List -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">Your Tokens</h5>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Token ID</th>
+          <th>Source</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Expires</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for token in tokens %}
+        <tr>
+          <td>{{ token.id|truncatechars:8 }}</td>
+          <td>{{ token.get_source_display }}</td>
+          <td>
+            {% if token.is_active %}
+            <span class="badge bg-success">Active</span>
+            {% elif token.used %}
+            <span class="badge bg-warning">Used</span>
+            {% else %}
+            <span class="badge bg-primary">Available</span>
+            {% endif %}
+          </td>
+          <td>{{ token.created_at|date:"Y-m-d H:i" }}</td>
+          <td>{{ token.expires_at|date:"Y-m-d H:i"|default:"—" }}</td>
+          <td>
+            {% if not token.used %}
+            <a href="{% url 'activate_token' token.id %}" class="btn btn-sm btn-primary">Activate</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center">No tokens yet. Register to receive 5 free tokens!</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Recent Sessions -->
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">Recent Sessions</h5>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Duration</th>
+          <th>Bandwidth</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in sessions %}
+        <tr>
+          <td>{{ session.start_time|date:"Y-m-d H:i" }}</td>
+          <td>{{ session.end_time|date:"Y-m-d H:i"|default:"Active" }}</td>
+          <td>{{ session.duration_seconds|default:0 }}s</td>
+          <td>{{ session.total_bytes|default:0 }} bytes</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center">No sessions yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
