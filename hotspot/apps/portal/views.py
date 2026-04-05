@@ -49,6 +49,10 @@ def get_media_services():
 
 def welcome(request):
     """Welcome/splash page for guest WiFi users."""
+    # Redirect authenticated users to dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     services = get_media_services()
     
     context = {}
