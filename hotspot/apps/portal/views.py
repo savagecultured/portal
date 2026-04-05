@@ -224,7 +224,7 @@ def admin_stats(request):
         total=Sum('amount')
     )['total'] or 0
     
-    return render(request, 'portal/admin_stats.html', {
+    return render(request, 'portal/admin.html', {
         'total_users': total_users,
         'active_users': active_users,
         'new_users_today': new_users_today,

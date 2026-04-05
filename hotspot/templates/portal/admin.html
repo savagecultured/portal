@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard — WebMART{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: calc(100vh - 70px);
+}
+
+.sidebar {
+    background: var(--wm-bg-card);
+    border-right: 1px solid var(--wm-border);
+    padding: 1.5rem;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--wm-radius-sm);
+    color: var(--wm-text-secondary);
+    transition: all 0.2s ease;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background: var(--wm-bg-hover);
+    color: var(--wm-text);
+}
+
+.sidebar-menu .icon {
+    font-size: 1.25rem;
+}
+
+.main-content {
+    padding: 1.5rem 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card-large {
+    background: var(--wm-bg-card);
+    border: 1px solid var(--wm-border);
+    border-radius: var(--wm-radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon-large {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--wm-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-content p {
+    color: var(--wm-text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--wm-text);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.action-card {
+    background: var(--wm-bg-card);
+    border: 1px solid var(--wm-border);
+    border-radius: var(--wm-radius);
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover {
+    border-color: var(--wm-primary);
+    transform: translateY(-2px);
+}
+
+.action-card a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--wm-text);
+}
+
+@media (max-width: 1024px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><span class="icon">📊</span> Overview</a></li>
+            <li><a href="/admin/"><span class="icon">⚙️</span> Django Admin</a></li>
+            <li><a href="/accounts/"><span class="icon">👥</span> Users</a></li>
+            <li><a href="/tokens/"><span class="icon">🎫</span> Tokens</a></li>
+            <li><a href="/admin/analytics/"><span class="icon">📈</span> Analytics</a></li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <h2 style="margin-bottom: 1.5rem;">Admin Dashboard</h2>
+        
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card-large">
+                <div class="stat-icon-large" style="background: rgba(139, 92, 246, 0.15);">👥</div>
+                <div class="stat-content">
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            <div class="stat-card-large">
+                <div class="stat-icon-large" style="background: rgba(16, 185, 129, 0.15);">🎫</div>
+                <div class="stat-content">
+                    <h3>{{ total_tokens }}</h3>
+                    <p>Total Tokens</p>
+                </div>
+            </div>
+            <div class="stat-card-large">
+                <div class="stat-icon-large" style="background: rgba(6, 182, 212, 0.15);">📊</div>
+                <div class="stat-content">
+                    <h3>{{ total_sessions }}</h3>
+                    <p>Total Sessions</p>
+                </div>
+            </div>
+            <div class="stat-card-large">
+                <div class="stat-icon-large" style="background: rgba(236, 72, 153, 0.15);">💰</div>
+                <div class="stat-content">
+                    <h3>${{ revenue }}</h3>
+                    <p>Revenue</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Token Stats -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">🎫 Token Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <span class="stat-number">{{ available_tokens }}</span>
+                            <span class="stat-label">Available</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <span class="stat-number">{{ active_tokens }}</span>
+                            <span class="stat-label">Active Now</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <span class="stat-number">{{ purchased_tokens }}</span>
+                            <span class="stat-label">Purchased</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <span class="stat-number">{{ active_sessions }}</span>
+                            <span class="stat-label">Active Sessions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <h4 class="section-title">Quick Actions</h4>
+        <div class="quick-actions">
+            <div class="action-card">
+                <a href="/admin/auth/user/add/"><span>➕</span> Add User</a>
+            </div>
+            <div class="action-card">
+                <a href="/admin/apps/tokens/token/add/"><span>🎫</span> Add Token</a>
+            </div>
+            <div class="action-card">
+                <a href="/admin/"><span>⚙️</span> Django Admin</a>
+            </div>
+            <div class="action-card">
+                <a href="/"><span>🏠</span> View Site</a>
+            </div>
+        </div>
+        
+        <!-- Recent Users -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">👥 Recent Users</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table">
+                    <thead>
+                        <tr><th>Email</th><th>Joined</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.date_joined|date:"M j, Y" }}</td>
+                            <td>{% if user.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center">No users yet</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Recent Sessions -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📊 Recent Sessions</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table">
+                    <thead>
+                        <tr><th>User</th><th>Start</th><th>Duration</th><th>Data</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for session in recent_sessions %}
+                        <tr>
+                            <td>{{ session.user.email|truncatechars:20 }}</td>
+                            <td>{{ session.start_time|date:"M j H:i" }}</td>
+                            <td>{{ session.duration_formatted }}</td>
+                            <td>{{ session.bandwidth_formatted }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center">No sessions yet</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
