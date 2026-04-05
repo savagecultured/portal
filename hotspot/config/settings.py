@@ -185,3 +185,9 @@ NAVIDROME_LABEL = os.getenv('NAVIDROME_LABEL', 'Navidrome')
 IMMICH_URL = os.getenv('IMMICH_URL', '')
 IMMICH_LABEL = os.getenv('IMMICH_LABEL', 'Immich')
 ADDITIONAL_SERVICES = os.getenv('ADDITIONAL_SERVICES', '')  # JSON: [{"name": "", "url": "", "icon": ""}]
+
+# Payment Gateway Settings
+PAYNOW_MERCHANT_ID = os.getenv('PAYNOW_MERCHANT_ID', '')
+PAYNOW_INTEGRATION_KEY = os.getenv('PAYNOW_INTEGRATION_KEY', '')
+PAYNOW_URL = os.getenv('PAYNOW_URL', 'https://paynow.co.nz/integration')  # Production
+TOKEN_PRICE = float(os.getenv('TOKEN_PRICE', '0.50'))

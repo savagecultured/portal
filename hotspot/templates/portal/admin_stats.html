@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Admin — WebMART{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-10 mx-auto">
+    <h2 class="mb-4">📊 Admin Dashboard</h2>
+    
+    <!-- Overview Stats -->
+    <div class="token-stats mb-4">
+      <div class="stat-card">
+        <span class="stat-number">{{ total_users }}</span>
+        <span class="stat-label">Total Users</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ active_users }}</span>
+        <span class="stat-label">Active Users</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ new_users_today }}</span>
+        <span class="stat-label">New Today</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">${{ revenue }}</span>
+        <span class="stat-label">Revenue</span>
+      </div>
+    </div>
+
+    <!-- Token Stats -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">🎫 Token Stats</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_tokens }}</span>
+              <span class="stat-label">Total Tokens</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <span class="stat-number">{{ available_tokens }}</span>
+              <span class="stat-label">Available</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <span class="stat-number">{{ active_tokens }}</span>
+              <span class="stat-label">Active Now</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <span class="stat-number">{{ purchased_tokens }}</span>
+              <span class="stat-label">Purchased</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Stats -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">📈 Session Stats</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_sessions }}</span>
+              <span class="stat-label">Total Sessions</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ active_sessions }}</span>
+              <span class="stat-label">Active Now</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_bandwidth }}</span>
+              <span class="stat-label">Total Bandwidth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Recent Users -->
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="mb-0">👥 Recent Users</h5>
+          </div>
+          <div class="card-body p-0">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Joined</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in recent_users %}
+                <tr>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.date_joined|date:"M j" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2" class="text-center">No users yet</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="mb-0">📊 Recent Sessions</h5>
+          </div>
+          <div class="card-body p-0">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Start</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for session in recent_sessions %}
+                <tr>
+                  <td>{{ session.user.email|truncatechars:15 }}</td>
+                  <td>{{ session.start_time|date:"M j H:i" }}</td>
+                  <td>{{ session.duration_formatted }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="text-center">No sessions yet</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

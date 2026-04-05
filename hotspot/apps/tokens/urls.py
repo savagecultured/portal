@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('activate/<uuid:token_id>/', views.activate_token, name='activate_token'),
     path('buy/', views.buy_tokens, name='buy_tokens'),
+    path('payment/<str:reference>/', views.payment_result, name='payment_result'),
 ]
 
 router = DefaultRouter()

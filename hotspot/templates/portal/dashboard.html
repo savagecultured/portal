@@ -22,7 +22,7 @@
         <span class="stat-label">Active Now</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number">{{ tokens|length }}</span>
+        <span class="stat-number">{{ total_tokens }}</span>
         <span class="stat-label">Total Tokens</span>
       </div>
     </div>
@@ -103,6 +103,39 @@
       </div>
     </div>
 
+    <!-- Usage Charts -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">📊 Usage Statistics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_sessions }}</span>
+              <span class="stat-label">Total Sessions</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_time_display }}</span>
+              <span class="stat-label">Time Online</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <span class="stat-number">{{ total_bandwidth_display }}</span>
+              <span class="stat-label">Data Used</span>
+            </div>
+          </div>
+        </div>
+        <h6 class="mb-2">Recent Activity</h6>
+        <div class="chart-container" style="height: 150px;">
+          <canvas id="usageChart"></canvas>
+        </div>
+      </div>
+    </div>
+
     <!-- Token List -->
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -168,7 +201,7 @@
     <!-- Recent Sessions -->
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0">📊 Recent Sessions</h5>
+        <h5 class="mb-0">📈 Session History</h5>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -186,8 +219,8 @@
               <tr>
                 <td>{{ session.start_time|date:"M j, H:i" }}</td>
                 <td>{% if session.end_time %}{{ session.end_time|date:"M j, H:i" }}{% else %}<span class="text-success">Active</span>{% endif %}</td>
-                <td>{% if session.duration_seconds %}{{ session.duration_seconds|divisibleby:3600|floordiv:0 }}h {{ session.duration_seconds|divisibleby:60|mod:60 }}m{% else %}—{% endif %}</td>
-                <td>{% if session.total_bytes %}{{ session.total_bytes|filesizeformat }}{% else %}—{% endif %}</td>
+                <td>{{ session.duration_formatted }}</td>
+                <td>{{ session.bandwidth_formatted }}</td>
               </tr>
               {% empty %}
               <tr>
@@ -203,4 +236,39 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('usageChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+          label: 'Data (MB)',
+          data: {{ chart_data|safe }},
+          borderColor: '#7c3aed',
+          backgroundColor: 'rgba(124, 58, 237, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  }
+});
+</script>
 {% endblock %}
