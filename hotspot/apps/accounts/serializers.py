@@ -5,6 +5,7 @@ from .models import WebmartUser, phone_regex
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     phone = serializers.CharField(max_length=13, required=False, validators=[phone_regex])
+    username = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = WebmartUser
@@ -12,9 +13,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Auto-generate username from email if not provided
-        if not validated_data.get('username'):
-            email = validated_data.get('email', '')
-            validated_data['username'] = email.split('@')[0] if '@' in email else email
+        username = validated_data.get('username') or validated_data.get('email', '')
+        if '@' in username:
+            username = username.split('@')[0]
+        validated_data['username'] = username
         return WebmartUser.objects.create_user(**validated_data)
 
 
