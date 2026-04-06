@@ -13,8 +13,9 @@ class RegistrationTest(TestCase):
 
     def test_registration_creates_user(self):
         data = {
+            'username': 'testuser',
             'email': 'test@example.com',
-            'phone': '1234567890',
+            'phone': '+263771234567',
             'date_of_birth': '1990-01-01',
             'password1': 'testpass123',
             'password2': 'testpass123',
