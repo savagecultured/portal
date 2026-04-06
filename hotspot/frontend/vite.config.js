@@ -13,11 +13,12 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: true,
     proxy: {
-      '/api': 'http://localhost:8000',
-      '/accounts': 'http://localhost:8000',
-      '/dashboard': 'http://localhost:8000',
-      '/admin': 'http://localhost:8000',
+      '/api': 'http://127.0.0.1:8000',
+      '/accounts': 'http://127.0.0.1:8000',
+      '/dashboard': 'http://127.0.0.1:8000',
+      '/admin': 'http://127.0.0.1:8000',
     }
   }
 })
