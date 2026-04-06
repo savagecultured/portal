@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.conf import settings
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
@@ -43,6 +43,19 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             WebmartUserSerializer(user).data,
             status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny])
+    def login(self, request):
+        """Login via API."""
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            return Response(WebmartUserSerializer(user).data)
+        return Response(
+            {'error': 'Invalid credentials'},
+            status=status.HTTP_401_UNAUTHORIZED
         )
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
