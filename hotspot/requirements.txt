@@ -1,0 +1,10 @@
+# Django framework
+Django>=5.2,<5.3
+
+# Third-party packages
+djangorestframework>=3.15,<3.16
+drf-spectacular>=0.28,<0.29
+crispy-forms>=2.3,<2.4
+crispy-bootstrap5>=0.7,<0.8
+whitenoise>=6.4,<6.5
+python-dotenv>=1.0,<1.1
